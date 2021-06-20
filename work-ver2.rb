@@ -30,8 +30,7 @@
 # 投入金額が足りない場合もしくは在庫がない場合、購入操作を行っても何もしない(STEP3-3)
 # 払い戻し操作では現在の投入金額からジュース購入金額を引いた釣り銭を出力する(STEP3-5) 処理はここで結果はvm.return_moneyで出ます
 # ジュース値段以上の投入金額が投入されている条件下で購入操作を行うと、釣り銭（投入金額とジュース値段の差分）を出力する(STEP5)
-# (注意) 引数は コーラ、レッドブル、水 の中から string型で入力して下さい
-# vm.juice_buy(name)
+# vm.juice_buy
 
 # 投入金額、在庫の点で購入可能なジュースのリスト
 # vm.available_purchase_juice
@@ -74,8 +73,8 @@ class VendingMachine
 
   #STEP2 格納されているジュースの情報
   def stock_info
-    @juice.each do |j, k|
-      k.each do |key, value|
+    @juice.each do |serial, info|
+      info.each do |key, value|
         puts "#{key}：#{value}"
       end
       puts "---------------"
@@ -84,11 +83,7 @@ class VendingMachine
 
   #STEP3 投入金額と在庫の点で、コーラが購入できるか
   def cola_buy_check
-    if @slot_money >= @juice[:type1][:price] && (@juice[:type1][:stock]).positive?
-      'コーラを購入できます'
-    else
-      'コーラを購入できません'
-    end
+    @slot_money >= @juice[:type1][:price] && (@juice[:type1][:stock]).positive? ? 'コーラを購入可能○' : 'コーラを購入不可✖️'
   end
 
   #STEP3 ジュース値段以上の投入金額が投入されている条件下で購入操作を行うと、ジュースの在庫を減らし、売り上げ金額を増やす。
@@ -98,7 +93,7 @@ class VendingMachine
     puts 'コーラ'
     puts 'レッドブル'
     puts '水'
-      name = gets.to_s
+    name = gets
 
     if name == 'コーラ' && @juice[:type1][:price] <= @slot_money && (@juice[:type1][:stock]).positive?
       @sales_money += @juice[:type1][:price]
@@ -120,14 +115,17 @@ class VendingMachine
     end
   end
 
-  #STEP4 投入金額、在庫の点で購入可能なジュースのリスト
+  #STEP4 投入金額、在庫の点で購入可能なドリンクのリストを取得できる。
   def available_purchase_juice
     juice = @juice.dup
-    juice.delete_if { |k, v|
-      v[:stock].zero? || v[:price] > @slot_money
+
+    juice.delete_if { |serial, info|
+      info[:stock].zero? || info[:price] > @slot_money
     }
+
+    juice.each do |serial, info|
+      puts info[:name]
+    end
   end
 
 end
-
-#変数に入れてみた NG
