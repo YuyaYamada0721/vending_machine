@@ -21,7 +21,7 @@
 # vm.return_money
 
 # 格納されているジュースの情報(STEP2)
-# vm.juice_data
+# vm.stock_info
 
 # 投入金額と在庫の点で、コーラが購入できるか(STEP3-1)
 # vm.cola_buy_check
@@ -40,10 +40,6 @@
 class VendingMachine
   MONEY = [10, 50, 100, 500, 1000].freeze
 
-  #投入金額の初期化
-  #STEP2 ジュースの格納
-  #STEP3 売り上げ金額の初期化
-  #STEP4 ジュース3種類
   def initialize
     @slot_money = 0
     @sales_money = 0
@@ -77,10 +73,13 @@ class VendingMachine
   end
 
   #STEP2 格納されているジュースの情報
-  def juice_data
-    puts "#{@juice[:type1][:name]}があります。#{@juice[:type1][:price]}円です。#{@juice[:type1][:stock]}本あります。"
-    puts "#{@juice[:type2][:name]}があります。#{@juice[:type2][:price]}円です。#{@juice[:type2][:stock]}本あります。"
-    puts "#{@juice[:type3][:name]}があります。#{@juice[:type3][:price]}円です。#{@juice[:type3][:stock]}本あります。"
+  def stock_info
+    @juice.each do |j, k|
+      k.each do |key, value|
+        puts "#{key}：#{value}"
+      end
+      puts "---------------"
+    end
   end
 
   #STEP3 投入金額と在庫の点で、コーラが購入できるか
@@ -94,7 +93,13 @@ class VendingMachine
 
   #STEP3 ジュース値段以上の投入金額が投入されている条件下で購入操作を行うと、ジュースの在庫を減らし、売り上げ金額を増やす。
   #STEP5 ジュース値段以上の投入金額が投入されている条件下で購入操作を行うと、釣り銭（投入金額とジュース値段の差分）を出力する。
-  def juice_buy(name)
+  def juice_buy
+    p '購入したい飲み物の名前を入力して下さい'
+    puts 'コーラ'
+    puts 'レッドブル'
+    puts '水'
+      name = gets.to_s
+
     if name == 'コーラ' && @juice[:type1][:price] <= @slot_money && (@juice[:type1][:stock]).positive?
       @sales_money += @juice[:type1][:price]
       @slot_money -= @juice[:type1][:price]
