@@ -35,7 +35,7 @@
 # 投入金額、在庫の点で購入可能なジュースのリスト
 # vm.available_purchase_juice
 
-
+# 自動販売機クラスです
 class VendingMachine
   MONEY = [10, 50, 100, 500, 1000].freeze
 
@@ -43,56 +43,59 @@ class VendingMachine
     @juice = {
       type1: { name: 'コーラ', price: 120, stock: 5 },
       type2: { name: 'レッドブル', price: 200, stock: 5 },
-      type3: { name: '水', price: 100, stock: 0 }
+      type3: { name: '水', price: 100, stock: 5 }
     }
     @slot_money = 0
     @sales_money = 0
   end
 
-  #引数が投入できる金額として正しいか判断して投入する
+  # 引数が投入できる金額として正しいか判断して投入する
   def slot_money(money)
     return false unless MONEY.include?(money)
+
     @slot_money += money
   end
 
-  #現在の投入金額
+  # 現在の投入金額
   def current_slot_money
     @slot_money
   end
 
-  #STEP3 現在の売り上げ金額確認
+  # STEP3 現在の売り上げ金額確認
   def current_sales_money
     @sales_money
   end
 
-  #お金返却
+  # お金返却
   def return_money
     puts @slot_money
     @slot_money = 0
   end
 
-  #STEP2 格納されているジュースの情報
+  # STEP2 格納されているジュースの情報
   def stock_info
     @juice.each do |serial, info|
       info.each do |key, value|
         puts "#{key}：#{value}"
       end
-      puts "---------------"
+      puts '---------------'
     end
   end
 
-  #STEP3 投入金額と在庫の点で、コーラが購入できるか
+  # STEP3 投入金額、在庫の点で、コーラが購入できるかどうかを取得できる。
   def cola_buy_check
     @slot_money >= @juice[:type1][:price] && (@juice[:type1][:stock]).positive? ? 'コーラを購入可能○' : 'コーラを購入不可✖️'
   end
 
-  #STEP3 ジュース値段以上の投入金額が投入されている条件下で購入操作を行うと、ジュースの在庫を減らし、売り上げ金額を増やす。
-  #STEP5 ジュース値段以上の投入金額が投入されている条件下で購入操作を行うと、釣り銭（投入金額とジュース値段の差分）を出力する。
+  # STEP3 ジュース値段以上の投入金額が投入されている条件下で購入操作を行うと、ジュースの在庫を減らし、売り上げ金額を増やす。
+  # STEP5 ジュース値段以上の投入金額が投入されている条件下で購入操作を行うと、釣り銭（投入金額とジュース値段の差分）を出力する。
   def juice_buy
-    p '購入したい飲み物の名前を入力して下さい'
-    puts 'コーラ'
-    puts 'レッドブル'
-    puts '水'
+    puts '購入する飲み物の名前を入力して下さい'
+
+    @juice.each do |serial, info|
+      puts info[:name]
+    end
+
     name = gets
 
     if name == 'コーラ' && @juice[:type1][:price] <= @slot_money && (@juice[:type1][:stock]).positive?
@@ -115,7 +118,7 @@ class VendingMachine
     end
   end
 
-  #STEP4 投入金額、在庫の点で購入可能なドリンクのリストを取得できる。
+  # STEP4 投入金額、在庫の点で購入可能なドリンクのリストを取得できる。
   def available_purchase_juice
     juice = @juice.dup
 
@@ -127,5 +130,4 @@ class VendingMachine
       puts info[:name]
     end
   end
-
 end
