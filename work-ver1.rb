@@ -3,7 +3,7 @@
 # --------------------------------
 
 # irbでファイル読み込み
-# require '/Users/yuyaya/desktop/work/work.rb'
+# require '/Users/yuyaya/desktop/work/work-ver1.rb'
 
 # インスタンス化
 # vm = VendingMachine.new

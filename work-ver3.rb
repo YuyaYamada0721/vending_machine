@@ -3,7 +3,7 @@
 # --------------------------------
 
 # irbでファイル読み込み
-# require '/Users/yuyaya/desktop/work/work-ver2.rb'
+# require '/Users/yuyaya/desktop/work/work-ver3.rb'
 
 # インスタンス化
 # vm = VendingMachine.new
@@ -36,8 +36,43 @@
 # vm.available_purchase_juice
 
 # 自動販売機クラスです
+module ProcessingCola
+  def case_cola
+    @sales_money += @juice[:type1][:price]
+    @slot_money -= @juice[:type1][:price]
+    @juice[:type1][:stock] -= 1
+    "残額#{@slot_money}円"
+  end
+  module_function :case_cola
+end
+
+module ProcessingRedbull
+  def case_redbull
+    @sales_money += @juice[:type2][:price]
+    @slot_money -= @juice[:type2][:price]
+    @juice[:type2][:stock] -= 1
+    "残額#{@slot_money}円"
+  end
+  module_function :case_redbull
+end
+
+module ProcessingWatter
+  def case_watter
+    @sales_money += @juice[:type3][:price]
+    @slot_money -= @juice[:type3][:price]
+    @juice[:type3][:stock] -= 1
+    "残額#{@slot_money}円"
+  end
+  module_function :case_watter
+end
+
+# ---------------------------------------
+
 class VendingMachine
   MONEY = [10, 50, 100, 500, 1000].freeze
+  include ProcessingCola
+  include ProcessingRedbull
+  include ProcessingWatter
 
   def initialize
     @juice = {
@@ -94,25 +129,29 @@ class VendingMachine
     puts '１：コーラ'
     puts '２：レッドブル'
     puts '３：水'
-    name = gets.to_i
+    select_number = gets.to_i
 
-    if name == 1 && @juice[:type1][:price] <= @slot_money && (@juice[:type1][:stock]).positive?
-      @sales_money += @juice[:type1][:price]
-      @slot_money -= @juice[:type1][:price]
-      @juice[:type1][:stock] -= 1
-      "残額#{@slot_money}円"
-    elsif name == 2 && @juice[:type2][:price] <= @slot_money && (@juice[:type2][:stock]).positive?
-      @sales_money += @juice[:type2][:price]
-      @slot_money -= @juice[:type2][:price]
-      @juice[:type2][:stock] -= 1
-      "残額#{@slot_money}円"
-    elsif name == 3 && @juice[:type3][:price] <= @slot_money && (@juice[:type3][:stock]).positive?
-      @sales_money += @juice[:type3][:price]
-      @slot_money -= @juice[:type3][:price]
-      @juice[:type3][:stock] -= 1
-      "残額#{@slot_money}円"
+    case select_number
+    when 1
+      if @juice[:type1][:price] <= @slot_money && (@juice[:type1][:stock]).positive?
+        case_cola
+      else
+        '購入できません'
+      end
+    when 2
+      if @juice[:type2][:price] <= @slot_money && (@juice[:type2][:stock]).positive?
+        case_redbull
+      else
+        '購入できません'
+      end
+    when 3
+      if @juice[:type3][:price] <= @slot_money && (@juice[:type3][:stock]).positive?
+        case_watter
+      else
+        '購入できません'
+      end
     else
-      '購入できません'
+      'そのジュースはありません'
     end
   end
 

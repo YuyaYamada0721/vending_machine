@@ -20,9 +20,9 @@
 #   p juice.values_at
 
     @juice = {
-      type1: { name: 'コーラ', price: 120, stock: 5 },
+      type1: { name: 'コーラ', price: 120, stock: 0 },
       type2: { name: 'レッドブル', price: 200, stock: 5 },
-      type3: { name: '水', price: 100, stock: 0 }
+      type3: { name: '水', price: 100, stock: 1 }
     }
 
   # def stock_info
@@ -47,17 +47,17 @@
   #   end
   #     puts "---------------"
   # end
-@slot_money = 120
+@slot_money = 200
 
-def buy_info
-  @juice.delete_if { |k, v|
-    v[:stock] == 0
-    v[:price] <= @slot_money
-  }
-    p @juice
-end
+# def buy_info
+#   @juice.delete_if { |k, v|
+#     v[:stock] == 0
+#     v[:price] <= @slot_money
+#   }
+#     p @juice
+# end
 
-buy_info
+# buy_info
 
   # def available_purchase_juice
   #   juice_info = @juice.new
@@ -67,3 +67,14 @@ buy_info
   #   }
   #   juice_info
   # end
+
+    def available_purchase_juice
+    juice = @juice.dup
+    juice.delete_if { |serial, info|
+      info[:stock].zero? || info[:price] > @slot_money
+    }
+    juice.each do |serial, info|
+        puts info[:name]
+      end
+    end
+    available_purchase_juice
