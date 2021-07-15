@@ -68,13 +68,13 @@
   #   juice_info
   # end
 
-    def available_purchase_juice
-    juice = @juice.dup
-    juice.delete_if { |serial, info|
-      info[:stock].zero? || info[:price] > @slot_money
-    }
-    juice.each do |serial, info|
-        puts info[:name]
-      end
-    end
-    available_purchase_juice
+    # def available_purchase_juice
+    # juice = @juice.dup
+    # juice.delete_if { |serial, info|
+    #   info[:stock].zero? || info[:price] > @slot_money
+    # }
+    # juice.each do |serial, info|
+    #     puts info[:name]
+    #   end
+    # end
+    # available_purchase_juice
