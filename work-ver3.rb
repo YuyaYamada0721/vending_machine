@@ -41,6 +41,7 @@ module ProcessingCola
     @sales_money += @juice[:type1][:price]
     @slot_money -= @juice[:type1][:price]
     @juice[:type1][:stock] -= 1
+    @purchased_juice.push(@juice[:type1])
     "残額#{@slot_money}円"
   end
   module_function :case_cola
@@ -51,6 +52,7 @@ module ProcessingRedbull
     @sales_money += @juice[:type2][:price]
     @slot_money -= @juice[:type2][:price]
     @juice[:type2][:stock] -= 1
+    @purchased_juice.push(@juice[:type2])
     "残額#{@slot_money}円"
   end
   module_function :case_redbull
@@ -61,6 +63,7 @@ module ProcessingWatter
     @sales_money += @juice[:type3][:price]
     @slot_money -= @juice[:type3][:price]
     @juice[:type3][:stock] -= 1
+    @purchased_juice.push(@juice[:type3])
     "残額#{@slot_money}円"
   end
   module_function :case_watter
@@ -82,6 +85,7 @@ class VendingMachine
     }
     @slot_money = 0
     @sales_money = 0
+    @purchased_juice = []
   end
 
   # 引数が投入できる金額として正しいか判断して投入する
@@ -119,13 +123,13 @@ class VendingMachine
 
   # STEP3 投入金額、在庫の点で、コーラが購入できるかどうかを取得できる。
   def cola_buy_check
-    @slot_money >= @juice[:type1][:price] && (@juice[:type1][:stock]).positive? ? 'コーラを購入可能○' : 'コーラを購入不可✖️'
+    @slot_money >= @juice[:type1][:price] && (@juice[:type1][:stock]).positive? ? 'コーラを購入可能' : 'コーラを購入不可'
   end
 
   # STEP3 ジュース値段以上の投入金額が投入されている条件下で購入操作を行うと、ジュースの在庫を減らし、売り上げ金額を増やす。
   # STEP5 ジュース値段以上の投入金額が投入されている条件下で購入操作を行うと、釣り銭（投入金額とジュース値段の差分）を出力する。
   def juice_buy
-    p '購入する飲み物の数字を入力して下さい' # 文字だとエラーが出る 泣
+    p '購入する飲み物の数字を入力して下さい'
     puts '１：コーラ'
     puts '２：レッドブル'
     puts '３：水'
@@ -151,24 +155,30 @@ class VendingMachine
         '購入できません'
       end
     else
-      'そのジュースはありません'
+      '選択されたジュースはありません'
     end
   end
 
   # STEP4 投入金額、在庫の点で購入可能なドリンクのリストを取得できる。
-  def available_purchase_juice
+  def available_purchase
     juice = @juice.clone
 
     juice.delete_if { |_serial, info|
       info[:stock].zero? || info[:price] > @slot_money
     }
-
-    juice.each do |_serial, info|
-      if juice.empty?
-        p 'ない'
-      else
+    if juice.empty?
+      puts '購入できません'
+    else
+      juice.each do |_serial, info|
         puts info[:name]
       end
     end
+
   end
+
+  # 購入されたジュースのデータ履歴
+  def purchase_information
+    @purchased_juice
+  end
+
 end

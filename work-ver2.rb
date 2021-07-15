@@ -36,6 +36,8 @@
 # vm.available_purchase_juice
 
 # 自動販売機クラスです
+
+
 class VendingMachine
   MONEY = [10, 50, 100, 500, 1000].freeze
 
@@ -47,6 +49,7 @@ class VendingMachine
     }
     @slot_money = 0
     @sales_money = 0
+    @purchased_juice = []
   end
 
   # 引数が投入できる金額として正しいか判断して投入する
@@ -100,15 +103,18 @@ class VendingMachine
       @sales_money += @juice[:type1][:price]
       @slot_money -= @juice[:type1][:price]
       @juice[:type1][:stock] -= 1
+      @juice[:type1][:name] << @purchased_juice
       "残額#{@slot_money}円"
     elsif name == 2 && @juice[:type2][:price] <= @slot_money && (@juice[:type2][:stock]).positive?
       @sales_money += @juice[:type2][:price]
       @slot_money -= @juice[:type2][:price]
       @juice[:type2][:stock] -= 1
+      @juice[:type2][:name] << @purchased_juice
       "残額#{@slot_money}円"
     elsif name == 3 && @juice[:type3][:price] <= @slot_money && (@juice[:type3][:stock]).positive?
       @sales_money += @juice[:type3][:price]
       @slot_money -= @juice[:type3][:price]
+      @purchased_juice.push(@juice[:type3])
       @juice[:type3][:stock] -= 1
       "残額#{@slot_money}円"
     else
@@ -124,12 +130,19 @@ class VendingMachine
       info[:stock].zero? || info[:price] > @slot_money
     }
 
-    juice.each do |_serial, info|
-      if juice.empty?
-        p 'ない'
-      else
+    if juice.empty?
+      puts '購入できません'
+    else
+      juice.each do |_serial, info|
         puts info[:name]
       end
     end
+
   end
+
+  # 購入されたジュースのデータ履歴
+  def purchase_information
+    @purchased_juice
+  end
+
 end
